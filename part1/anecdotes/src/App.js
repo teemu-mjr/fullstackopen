@@ -14,26 +14,53 @@ const App = () => {
   const [selected, setSelected] = useState(0);
   const [points, setPoints] = useState(new Uint8Array(anecdotes.length));
 
+  const findLargestIndex = (array) => {
+    let largest = 0;
+    let index = 0;
+    for (let i = 0; i < array.length; i++) {
+      if (array[i] > largest) {
+        largest = array[i];
+        index = i;
+      }
+    }
+    return index;
+  };
+
+  const incrementPoints = (index) => {
+    let pointsCopy = [...points];
+    pointsCopy[index] += 1;
+    setPoints(pointsCopy);
+  };
+
+  const randomNewInt = (current, max) => {
+    let randInt = Math.floor(Math.random() * max);
+    if (max > 0 && randInt === current) {
+      return randomNewInt(current, max);
+    }
+    return randInt;
+  };
   return (
     <div>
+      <h1>Todays anecdote</h1>
       <div>{anecdotes[selected]}</div>
+      <p>This anecdote has {points[selected]} points</p>
       <button
         onClick={() => {
-          let pointsCopy = [...points];
-          pointsCopy[selected] += 1;
-          setPoints(pointsCopy);
+          incrementPoints(selected);
         }}
       >
         Vote
       </button>
       <button
         onClick={() => {
-          setSelected(Math.floor(Math.random() * anecdotes.length));
+          setSelected(randomNewInt(selected, anecdotes.length));
         }}
       >
         Next Anecdote
       </button>
-      <p>This anecdote has {points[selected]} points</p>
+
+      <h1>Anecdote with the most votes</h1>
+      <div>{anecdotes[findLargestIndex(points)]}</div>
     </div>
   );
 };
