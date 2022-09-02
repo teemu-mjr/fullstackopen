@@ -20,19 +20,13 @@ const Content = ({ parts }) => (
 );
 
 const Course = ({ course }) => {
-  const totalExercises = (parts) => {
-    let total = 0;
-    for (let i = 0; i < parts.length; i++) {
-      total += parts[i].exercises;
-    }
-    return total;
-  };
+  const total = course.parts.reduce((total, item) => total + item.exercises, 0);
 
   return (
     <div>
       <Header course={course.name} />
       <Content parts={course.parts} />
-      <Total sum={totalExercises(course.parts)} />
+      <Total sum={total} />
     </div>
   );
 };
