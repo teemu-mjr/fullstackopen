@@ -6,6 +6,12 @@ const App = () => {
 
   const handleNewPerson = (e) => {
     e.preventDefault();
+
+    if (isNameInPersons(newName)) {
+      alert(`${newName} is already in the phonebook`);
+      return;
+    }
+
     let newPerson = {
       name: newName,
     };
@@ -16,6 +22,15 @@ const App = () => {
   const handleNewName = (e) => {
     setNewName(e.target.value);
   };
+
+  const isNameInPersons = (searchName) => {
+    for (let i = 0; i < persons.length; i++) {
+      if (searchName === persons[i].name) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   return (
     <div>
