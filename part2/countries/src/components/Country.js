@@ -1,5 +1,4 @@
-const Country = ({ country }) => {
-  country.languages.map((lang) => console.log(lang))
+const Country = ({country}) => {
   return (
     <div>
       <div>
@@ -9,6 +8,14 @@ const Country = ({ country }) => {
       </div>
       <div>
         <h3>languages:</h3>
+        <ul>
+          {Object.values(country.languages).map((lang) => (
+            <li key={lang}>{lang}</li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <img src={country.flags.png}></img>
       </div>
     </div>
   );
