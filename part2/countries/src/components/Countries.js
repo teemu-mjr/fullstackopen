@@ -1,6 +1,6 @@
 import Country from "./Country";
 
-const Countries = ({ countries }) => {
+const Countries = ({countries, setFilter}) => {
   if (countries.length === 1) {
     return (
       <div>
@@ -13,7 +13,10 @@ const Countries = ({ countries }) => {
     return (
       <div>
         {countries.map((country) => (
-          <div key={country.cca2}>{country.name.common}</div>
+          <div key={country.cca2}>
+            {country.name.common}
+            <button onClick={() => setFilter(country.name.common)}>Show</button>
+          </div>
         ))}
       </div>
     );

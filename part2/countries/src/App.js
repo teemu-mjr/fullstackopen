@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
 import Countries from "./components/Countries";
 
@@ -26,7 +26,7 @@ function App() {
   return (
     <div>
       <input value={filter} onChange={handleFiler}></input>
-      <Countries countries={filteredCountires} />
+      <Countries countries={filteredCountires} setFilter={setFilter} />
     </div>
   );
 }
