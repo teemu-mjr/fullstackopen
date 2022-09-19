@@ -13,7 +13,7 @@ function App() {
   const filteredCountires =
     filter.length <= 0
       ? countries
-      : countries.filter((country) => country.name.common.includes(filter));
+      : countries.filter((country) => country.name.common.toLowerCase().includes(filter.toLowerCase()));
 
   const hook = () => {
     axios.get("https://restcountries.com/v3.1/all").then((response) => {
