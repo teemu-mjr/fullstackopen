@@ -2,18 +2,17 @@ import { useEffect, useState } from "react";
 import { Filter } from "./Filter";
 import { PersonForm } from "./PersonForm";
 import { Persons } from "./Persons";
-import axios from "axios";
+import personService from "./services/persons"
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [filter, setFilter] = useState("");
 
   const hook = () => {
-    axios
-      .get("http://localhost:3001/persons")
-      .then((response) => {
-      setPersons(response.data);
-    });
+    personService.getAll()
+      .then(response => {
+        setPersons(response.data);
+      })
   };
 
   useEffect(hook, []);

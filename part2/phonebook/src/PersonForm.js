@@ -1,4 +1,5 @@
 import { useState } from "react";
+import personService from "./services/persons.js"
 
 export const PersonForm = ({ persons, setPersons }) => {
   const [newName, setNewName] = useState("");
@@ -21,15 +22,16 @@ export const PersonForm = ({ persons, setPersons }) => {
       return;
     }
 
-    let newPerson = {
+    const newPerson = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1,
     };
 
-    setPersons(persons.concat(newPerson));
-    setNewName("");
-    setNewNumber("");
+    personService.create(newPerson).then(response => {
+        setPersons(persons.concat(response.data));
+        setNewName("");
+        setNewNumber("");
+    })
   };
 
   const handleNewName = (e) => {
