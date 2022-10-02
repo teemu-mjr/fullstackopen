@@ -11,6 +11,11 @@ const create = async (newObject) => {
   return req.then((res) => res.data);
 };
 
+const update = async (id, newObject) => {
+  const req = axios.put(`${baseUrl}/${id}`, newObject);
+  return req.then((res) => res.data);
+};
+
 const deleteOne = async (id) => {
   axios.delete(`${baseUrl}/${id}`);
 };
@@ -18,5 +23,6 @@ const deleteOne = async (id) => {
 export default {
   getAll,
   create,
+  update,
   deleteOne,
 };

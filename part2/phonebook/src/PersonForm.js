@@ -1,5 +1,5 @@
 import { useState } from "react";
-import personService from "./services/persons.js"
+import personService from "./services/persons.js";
 
 export const PersonForm = ({ persons, setPersons }) => {
   const [newName, setNewName] = useState("");
@@ -8,30 +8,59 @@ export const PersonForm = ({ persons, setPersons }) => {
   const isNameInPersons = (searchName) => {
     for (let i = 0; i < persons.length; i++) {
       if (searchName === persons[i].name) {
-        return true;
+        return i;
       }
     }
-    return false;
+    return -1;
+  };
+
+  const resetFields = () => {
+    setNewName("");
+    setNewNumber("");
+  };
+
+  const updatePerson = (oldIndex, newPerson) => {
+    personService.update(persons[oldIndex].id, newPerson);
+
+    let newPersons = [...persons];
+
+    newPersons[oldIndex] = {
+      ...newPersons[oldIndex],
+      name: newPerson.name,
+      number: newPerson.number,
+    };
+    setPersons(newPersons);
   };
 
   const handleNewPerson = (e) => {
     e.preventDefault();
-
-    if (isNameInPersons(newName)) {
-      alert(`${newName} is already in the phonebook`);
-      return;
-    }
 
     const newPerson = {
       name: newName,
       number: newNumber,
     };
 
-    personService.create(newPerson).then(data => {
-        setPersons(persons.concat(data));
-        setNewName("");
-        setNewNumber("");
-    })
+    let oldIndex = isNameInPersons(newName);
+
+    // Update a person
+    if (oldIndex !== -1) {
+      if (!window.confirm(
+        `${newPerson.name} exists! Do you want to update the number?`
+      )) {
+        return;
+      }
+
+      updatePerson(oldIndex, newPerson);
+      resetFields();
+
+      return;
+    }
+
+    // Create a new person
+    personService.create(newPerson).then((data) => {
+      setPersons(persons.concat(data));
+      resetFields();
+    });
   };
 
   const handleNewName = (e) => {
