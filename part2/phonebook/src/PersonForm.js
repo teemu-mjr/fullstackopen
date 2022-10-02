@@ -27,8 +27,8 @@ export const PersonForm = ({ persons, setPersons }) => {
       number: newNumber,
     };
 
-    personService.create(newPerson).then(response => {
-        setPersons(persons.concat(response.data));
+    personService.create(newPerson).then(data => {
+        setPersons(persons.concat(data));
         setNewName("");
         setNewNumber("");
     })
