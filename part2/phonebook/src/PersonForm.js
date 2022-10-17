@@ -33,16 +33,26 @@ export const PersonForm = ({
   };
 
   const updatePerson = (oldIndex, newPerson) => {
-    personService.update(persons[oldIndex].id, newPerson);
+    personService
+      .update(persons[oldIndex].id, newPerson)
+      .then((returnedPerson) => {
+        let newPersons = [...persons];
 
-    let newPersons = [...persons];
+        newPersons[oldIndex] = {
+          ...returnedPerson,
+          number: newPerson.number,
+        };
 
-    newPersons[oldIndex] = {
-      ...newPersons[oldIndex],
-      name: newPerson.name,
-      number: newPerson.number,
-    };
-    setPersons(newPersons);
+        setPersons(newPersons);
+
+        handleNewMessage(`${newPerson.name} was updated`, { color: "green" });
+      })
+      .catch((err) => {
+        handleNewMessage(`${newPerson.name} has been removed from the server`, {
+          color: "red",
+        });
+        console.log(err.message);
+      });
   };
 
   const handleNewPerson = (e) => {
@@ -66,7 +76,6 @@ export const PersonForm = ({
       }
       updatePerson(oldIndex, newPerson);
       resetFields();
-      handleNewMessage(`${newPerson.name} was updated`, { color: "green" });
       return;
     }
 
