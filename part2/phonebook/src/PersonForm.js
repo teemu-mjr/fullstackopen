@@ -1,7 +1,12 @@
 import { useState } from "react";
 import personService from "./services/persons.js";
 
-export const PersonForm = ({ persons, setPersons }) => {
+export const PersonForm = ({
+  persons,
+  setPersons,
+  setFormMessage,
+  setMessageStyle,
+}) => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
 
@@ -17,6 +22,14 @@ export const PersonForm = ({ persons, setPersons }) => {
   const resetFields = () => {
     setNewName("");
     setNewNumber("");
+  };
+
+  const handleNewMessage = (message, messageStyle) => {
+    setFormMessage(message);
+    setMessageStyle(messageStyle);
+    setTimeout(() => {
+      setFormMessage(null);
+    }, 2000);
   };
 
   const updatePerson = (oldIndex, newPerson) => {
@@ -44,15 +57,16 @@ export const PersonForm = ({ persons, setPersons }) => {
 
     // Update a person
     if (oldIndex !== -1) {
-      if (!window.confirm(
-        `${newPerson.name} exists! Do you want to update the number?`
-      )) {
+      if (
+        !window.confirm(
+          `${newPerson.name} exists! Do you want to update the number?`
+        )
+      ) {
         return;
       }
-
       updatePerson(oldIndex, newPerson);
       resetFields();
-
+      handleNewMessage(`${newPerson.name} was updated`, { color: "green" });
       return;
     }
 
@@ -60,6 +74,9 @@ export const PersonForm = ({ persons, setPersons }) => {
     personService.create(newPerson).then((data) => {
       setPersons(persons.concat(data));
       resetFields();
+      handleNewMessage(`${newPerson.name} was added to the phonebook`, {
+        color: "green",
+      });
     });
   };
 
