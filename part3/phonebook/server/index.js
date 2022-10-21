@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+app.use(express.json());
 
 const PORT = 3001;
 
@@ -26,6 +27,10 @@ let persons = [
   },
 ];
 
+const generateID = () => {
+  return Math.floor(Math.random() * 10000);
+};
+
 app.get("/api/persons", (req, res) => {
   res.json(persons);
 });
@@ -39,6 +44,23 @@ app.get("/api/persons/:id", (req, res) => {
   } else {
     res.status(404).end();
   }
+});
+
+app.post("/api/persons", (req, res) => {
+  const body = req.body;
+  console.log(body);
+
+  const newPreson = {
+    name: body.name,
+    number: body.number,
+    id: generateID(),
+  };
+
+  console.log(newPreson.id);
+
+  persons = persons.concat(newPreson);
+
+  res.json(newPreson);
 });
 
 app.delete("/api/persons/:id", (req, res) => {
