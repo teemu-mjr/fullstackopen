@@ -1,4 +1,4 @@
-import personService from "./services/persons.js";
+import personController from "./controllers/persons";
 
 export const Persons = ({ persons, setPersons, filter }) => {
   const personsToShow =
@@ -17,7 +17,7 @@ export const Persons = ({ persons, setPersons, filter }) => {
                 return;
               }
 
-              personService.deleteOne(person.id);
+              personController.deleteOne(person.id);
               setPersons(persons.filter((obj) => obj.id !== person.id));
             }}
           >

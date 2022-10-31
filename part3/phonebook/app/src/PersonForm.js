@@ -1,5 +1,5 @@
 import { useState } from "react";
-import personService from "./services/persons.js";
+import personController from "./controllers/persons";
 
 export const PersonForm = ({
   persons,
@@ -33,7 +33,7 @@ export const PersonForm = ({
   };
 
   const updatePerson = (oldIndex, newPerson) => {
-    personService
+    personController
       .update(persons[oldIndex].id, newPerson)
       .then((returnedPerson) => {
         let newPersons = [...persons];
@@ -80,7 +80,7 @@ export const PersonForm = ({
     }
 
     // Create a new person
-    personService.create(newPerson).then((data) => {
+    personController.create(newPerson).then((data) => {
       setPersons(persons.concat(data));
       resetFields();
       handleNewMessage(`${newPerson.name} was added to the phonebook`, {

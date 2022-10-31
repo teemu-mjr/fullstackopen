@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseUrl = "http://localhost:3001/persons";
+const baseUrl = "http://localhost:3001/api/persons";
 
 const getAll = async () => {
   const req = axios.get(baseUrl);
@@ -20,9 +20,11 @@ const deleteOne = async (id) => {
   axios.delete(`${baseUrl}/${id}`);
 };
 
-export default {
+const personController = {
   getAll,
   create,
   update,
   deleteOne,
 };
+
+export default personController;
