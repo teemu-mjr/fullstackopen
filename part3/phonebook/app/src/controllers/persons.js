@@ -2,22 +2,25 @@ import axios from "axios";
 const baseUrl = "http://localhost:3001/api/persons";
 
 const getAll = async () => {
-  const req = axios.get(baseUrl);
-  return req.then((res) => res.data);
+  return axios
+    .get(baseUrl) //
+    .then((result) => result.data);
 };
 
 const create = async (newObject) => {
-  const req = axios.post(baseUrl, newObject);
-  return req.then((res) => res.data);
+  return axios
+    .post(baseUrl, newObject) //
+    .then((result) => result.data);
 };
 
 const update = async (id, newObject) => {
-  const req = axios.put(`${baseUrl}/${id}`, newObject);
-  return req.then((res) => res.data);
+  return axios
+    .put(`${baseUrl}/${id}`, newObject) //
+    .then((result) => result.data);
 };
 
 const deleteOne = async (id) => {
-  axios.delete(`${baseUrl}/${id}`);
+  return axios.delete(`${baseUrl}/${id}`);
 };
 
 const personController = {

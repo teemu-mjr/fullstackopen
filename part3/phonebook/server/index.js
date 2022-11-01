@@ -1,5 +1,8 @@
 const express = require("express");
 const app = express();
+require("dotenv").config();
+const Person = require("./models/person");
+
 const morgan = require("morgan");
 const cors = require("cors");
 
@@ -10,7 +13,6 @@ app.use(
 );
 
 const PORT = process.env.port || 3001;
-const baseUrl = "/api/persons";
 
 morgan.token("body", (req) => {
   if (req.method === "POST") {
@@ -18,83 +20,48 @@ morgan.token("body", (req) => {
   }
 });
 
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456",
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523",
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345",
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122",
-  },
-];
-
 const generateID = () => {
   return Math.floor(Math.random() * 10000);
 };
 
 app.use(express.static("build"));
 
-app.get(baseUrl, (req, res) => {
-  res.json(persons);
+app.get("/api/persons", (req, res) => {
+  Person.find({}).then((notes) => {
+    res.json(notes);
+  });
 });
 
-app.get(`${baseUrl}/:id`, (req, res) => {
-  const id = Number(req.params.id);
-  const person = persons.find((person) => person.id === id);
-
-  if (person) {
-    res.json(person);
-  } else {
-    res.status(404).end();
-  }
+app.get("/api/persons/:id", (req, res) => {
+  Person.findById(req.params.id).then((note) => {
+    response.json(note);
+  });
 });
 
-app.post(baseUrl, (req, res) => {
+app.post("/api/persons", (req, res) => {
   const body = req.body;
 
-  if (!body.name || !body.number) {
-    return res.status(400).json({
-      error: "name or number is missing",
-    });
+  if (body.name === undefined || body.number === undefined) {
+    return res.status(400).json({ error: "content missing" });
   }
 
-  if (persons.find((person) => person.name === body.name)) {
-    return res.status(400).json({
-      error: "name must be unique",
-    });
-  }
-
-  const newPreson = {
+  const person = new Person({
     id: generateID(),
     name: body.name,
     number: body.number,
-  };
+  });
 
-  persons = persons.concat(newPreson);
-
-  res.json(newPreson);
+  person.save().then((savedPerson) => {
+    res.json(savedPerson);
+  });
 });
 
-app.delete(`${baseUrl}/:id`, (req, res) => {
-  const id = Number(req.params.id);
-  persons = persons.filter((person) => person.id !== id);
-
+app.delete("/api/persons/:id", (req, res) => {
+  Person.findByIdAndDelete(req.params.id).then();
   res.status(204).end();
 });
 
+// TODO ?
 app.get("/info", (req, res) => {
   res.send(`
   <div>
