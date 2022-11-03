@@ -24,21 +24,37 @@ const generateID = () => {
   return Math.floor(Math.random() * 10000);
 };
 
+const errorHandler = (error, req, res, next) => {
+  console.error(error.message);
+
+  if (error.name === "CastError") {
+    return res.status(400).send({ error: "malformatted id" });
+  }
+
+  next(error);
+};
+
+app.use(errorHandler);
+
 app.use(express.static("build"));
 
-app.get("/api/persons", (req, res) => {
-  Person.find({}).then((notes) => {
-    res.json(notes);
-  });
+app.get("/api/persons", (req, res, next) => {
+  Person.find({})
+    .then((notes) => {
+      res.json(notes);
+    })
+    .catch((error) => next(error));
 });
 
-app.get("/api/persons/:id", (req, res) => {
-  Person.findById(req.params.id).then((note) => {
-    response.json(note);
-  });
+app.get("/api/persons/:id", (req, res, next) => {
+  Person.findById(req.params.id)
+    .then((note) => {
+      response.json(note);
+    })
+    .catch((error) => next(error));
 });
 
-app.post("/api/persons", (req, res) => {
+app.post("/api/persons", (req, res, next) => {
   const body = req.body;
 
   if (body.name === undefined || body.number === undefined) {
@@ -51,19 +67,20 @@ app.post("/api/persons", (req, res) => {
     number: body.number,
   });
 
-  person.save().then((savedPerson) => {
-    res.json(savedPerson);
-  });
+  person
+    .save()
+    .then((savedPerson) => {
+      res.json(savedPerson);
+    })
+    .catch((error) => next(error));
 });
 
-app.delete("/api/persons/:id", (req, res) => {
+app.delete("/api/persons/:id", (req, res, next) => {
   Person.findByIdAndDelete(req.params.id) //
     .then((result) => {
       res.status(204).end();
     })
-    .catch((error) => {
-      console.log(error);
-    });
+    .catch((error) => next(error));
 });
 
 // TODO ?
