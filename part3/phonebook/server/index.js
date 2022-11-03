@@ -57,8 +57,13 @@ app.post("/api/persons", (req, res) => {
 });
 
 app.delete("/api/persons/:id", (req, res) => {
-  Person.findByIdAndDelete(req.params.id).then();
-  res.status(204).end();
+  Person.findByIdAndDelete(req.params.id) //
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 });
 
 // TODO ?
