@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Filter } from "./Filter";
 import { PersonForm } from "./PersonForm";
 import { Persons } from "./Persons";
-import personController from "./controllers/persons";
+import personService from "./services/persons";
 import Notification from "./Notification";
 
 const App = () => {
@@ -12,7 +12,7 @@ const App = () => {
   const [messageStyle, setMessageStyle] = useState(null);
 
   const hook = () => {
-    personController.getAll().then((data) => {
+    personService.getAll().then((data) => {
       setPersons(data);
     });
   };

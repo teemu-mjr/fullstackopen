@@ -1,5 +1,5 @@
 import { useState } from "react";
-import personController from "./controllers/persons";
+import personService from "./services/persons";
 
 export const PersonForm = ({
   persons,
@@ -33,7 +33,7 @@ export const PersonForm = ({
   };
 
   const updatePerson = (oldIndex, newPerson) => {
-    personController
+    personService
       .updateOne(persons[oldIndex].id, newPerson)
       .then((returnedPerson) => {
         let newPersons = [...persons];
@@ -80,13 +80,19 @@ export const PersonForm = ({
     }
 
     // Create a new person
-    personController.create(newPerson).then((data) => {
-      setPersons(persons.concat(data));
-      resetFields();
-      handleNewMessage(`${newPerson.name} was added to the phonebook`, {
-        color: "green",
+    personService
+      .create(newPerson)
+      .then((data) => {
+        console.log("OK");
+        setPersons(persons.concat(data));
+        resetFields();
+        handleNewMessage(`${newPerson.name} was added to the phonebook`, {
+          color: "green",
+        });
+      })
+      .catch((error) => {
+        handleNewMessage(error.response.data.error, { color: "red" });
       });
-    });
   };
 
   const handleNewName = (e) => {

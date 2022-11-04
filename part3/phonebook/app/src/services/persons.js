@@ -23,11 +23,11 @@ const deleteOne = async (id) => {
   return axios.delete(`${baseUrl}/${id}`);
 };
 
-const personController = {
+const personService = {
   getAll,
   create,
   updateOne,
   deleteOne,
 };
 
-export default personController;
+export default personService;
