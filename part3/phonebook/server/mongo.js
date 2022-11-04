@@ -22,7 +22,7 @@ if (!process.argv[3]) {
   // print the database persons
   mongoose
     .connect(url)
-    .then((result) => {
+    .then(() => {
       Person.find({}).then((result) => {
         console.log("phonebook:");
         result.forEach((person) => {
@@ -36,7 +36,7 @@ if (!process.argv[3]) {
   // add a new person to the database
   mongoose
     .connect(url)
-    .then((result) => {
+    .then(() => {
       const person = new Person({
         name: process.argv[3],
         number: process.argv[4],
