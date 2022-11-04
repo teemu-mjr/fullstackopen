@@ -43,7 +43,7 @@ app.get("/api/persons", (req, res, next) => {
 app.get("/api/persons/:id", (req, res, next) => {
   Person.findById(req.params.id)
     .then((note) => {
-      response.json(note);
+      res.json(note);
     })
     .catch((error) => next(error));
 });
@@ -92,18 +92,22 @@ app.put("/api/persons/:id", (req, res, next) => {
 });
 
 // TODO ?
-app.get("/info", (req, res) => {
-  res.send(`
-  <div>
+app.get("/info", (req, res, next) => {
+  Person.find({}) //
+    .then((result) => {
+      res.send(`
     <div>
-      phonebook has ${persons.length} people
+      <div>
+        phonebook has ${result.length} people
+      </div>
+      <br>
+      <div>
+        ${new Date()}
+      </div>
     </div>
-    <br>
-    <div>
-      ${new Date()}
-    </div>
-  </div>
-`);
+  `);
+    })
+    .catch((error) => next(error));
 });
 
 app.use(errorHandler);
