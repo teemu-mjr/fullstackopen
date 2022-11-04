@@ -47,11 +47,8 @@ export const PersonForm = ({
 
         handleNewMessage(`${newPerson.name} was updated`, { color: "green" });
       })
-      .catch((err) => {
-        handleNewMessage(`${newPerson.name} has been removed from the server`, {
-          color: "red",
-        });
-        console.log(err.message);
+      .catch((error) => {
+        handleNewMessage(error.response.data.error, { color: "red" });
       });
   };
 
@@ -83,7 +80,6 @@ export const PersonForm = ({
     personService
       .create(newPerson)
       .then((data) => {
-        console.log("OK");
         setPersons(persons.concat(data));
         resetFields();
         handleNewMessage(`${newPerson.name} was added to the phonebook`, {
