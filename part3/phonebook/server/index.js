@@ -14,15 +14,13 @@ app.use(
 
 const PORT = process.env.port || 3001;
 
+app.use(express.static("build"));
+
 morgan.token("body", (req) => {
   if (req.method === "POST") {
     return JSON.stringify(req.body);
   }
 });
-
-const generateID = () => {
-  return Math.floor(Math.random() * 10000);
-};
 
 const errorHandler = (error, req, res, next) => {
   console.error(error.message);
@@ -34,14 +32,10 @@ const errorHandler = (error, req, res, next) => {
   next(error);
 };
 
-app.use(errorHandler);
-
-app.use(express.static("build"));
-
 app.get("/api/persons", (req, res, next) => {
   Person.find({})
-    .then((notes) => {
-      res.json(notes);
+    .then((persons) => {
+      return res.json(persons);
     })
     .catch((error) => next(error));
 });
@@ -62,7 +56,6 @@ app.post("/api/persons", (req, res, next) => {
   }
 
   const person = new Person({
-    id: generateID(),
     name: body.name,
     number: body.number,
   });
@@ -83,6 +76,21 @@ app.delete("/api/persons/:id", (req, res, next) => {
     .catch((error) => next(error));
 });
 
+app.put("/api/persons/:id", (req, res, next) => {
+  const body = req.body;
+
+  const person = {
+    name: body.name,
+    number: body.number,
+  };
+
+  Person.findByIdAndUpdate(req.params.id, person, { new: true })
+    .then((updatedPerson) => {
+      res.json(updatedPerson);
+    })
+    .catch((error) => next(error));
+});
+
 // TODO ?
 app.get("/info", (req, res) => {
   res.send(`
@@ -97,6 +105,8 @@ app.get("/info", (req, res) => {
   </div>
 `);
 });
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`server listening on port ${PORT}`);

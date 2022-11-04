@@ -34,7 +34,7 @@ export const PersonForm = ({
 
   const updatePerson = (oldIndex, newPerson) => {
     personController
-      .update(persons[oldIndex].id, newPerson)
+      .updateOne(persons[oldIndex].id, newPerson)
       .then((returnedPerson) => {
         let newPersons = [...persons];
 

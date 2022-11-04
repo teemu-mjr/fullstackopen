@@ -13,7 +13,7 @@ const create = async (newObject) => {
     .then((result) => result.data);
 };
 
-const update = async (id, newObject) => {
+const updateOne = async (id, newObject) => {
   return axios
     .put(`${baseUrl}/${id}`, newObject) //
     .then((result) => result.data);
@@ -26,7 +26,7 @@ const deleteOne = async (id) => {
 const personController = {
   getAll,
   create,
-  update,
+  updateOne,
   deleteOne,
 };
 
