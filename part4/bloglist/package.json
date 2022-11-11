@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "start": "node  index.js",
+    "dev": "nodemon index.js",
+    "test": "jest --verbose"
   },
   "keywords": [],
   "author": "",
@@ -16,5 +18,8 @@
   "dependencies": {
     "express": "^4.18.2",
     "mongoose": "^6.7.2"
+  },
+  "jest": {
+    "testEnvironmet": "node"
   }
 }
