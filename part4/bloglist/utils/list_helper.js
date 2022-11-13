@@ -45,7 +45,33 @@ const mostBlogs = (blogs) => {
 
   let top = resultArray[0];
   for (let i = 1; i < resultArray.length; ++i) {
-    if (resultArray[i].blogs > top.blogs){
+    if (resultArray[i].blogs > top.blogs) {
+      top = resultArray[i];
+    }
+  }
+
+  return top;
+};
+
+const mostLikes = (blogs) => {
+  resultArray = [];
+
+  for (let i = 0; i < blogs.length; ++i) {
+    for (let j = 0; j < resultArray.length; ++j) {
+      if (blogs[i].author === resultArray[j].author) {
+        resultArray[j].likes += blogs[i].likes;
+        break;
+      }
+    }
+    resultArray.push({
+      author: blogs[i].author,
+      likes: blogs[i].likes,
+    });
+  }
+
+  let top = resultArray[0];
+  for (let i = 1; i < resultArray.length; ++i) {
+    if (resultArray[i].likes > top.likes) {
       top = resultArray[i];
     }
   }
@@ -57,5 +83,6 @@ module.exports = {
   dummy,
   totalLikes,
   favouriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes,
 };
