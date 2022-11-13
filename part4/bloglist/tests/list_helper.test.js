@@ -78,7 +78,7 @@ describe("total likes", () => {
 describe("favourite blog", () => {
   test("of empty list is null", () => {
     const result = listHelper.favouriteBlog([]);
-    expect(result).toEqual(null);
+    expect(result).toEqual(undefined);
   });
 
   test("when list has only one blog", () => {
@@ -96,6 +96,29 @@ describe("favourite blog", () => {
       title: "Canonical string reduction",
       author: "Edsger W. Dijkstra",
       likes: 12,
+    });
+  });
+});
+
+describe("most blogs", () => {
+  test("of empty list is null", () => {
+    const result = listHelper.mostBlogs([]);
+    expect(result).toEqual(undefined);
+  });
+
+  test("when list has only one blog", () => {
+    const result = listHelper.mostBlogs([blogs[0]]);
+    expect(result).toEqual({
+      author: "Michael Chan",
+      blogs: 1,
+    });
+  });
+
+  test("of a bigger list", () => {
+    const result = listHelper.mostBlogs(blogs);
+    expect(result).toEqual({
+      author: "Robert C. Martin",
+      blogs: 3,
     });
   });
 });

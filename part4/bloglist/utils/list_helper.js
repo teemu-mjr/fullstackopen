@@ -13,7 +13,7 @@ const totalLikes = (blogs) => {
 const favouriteBlog = (blogs) => {
   // empty list
   if (blogs.length <= 0) {
-    return null;
+    return undefined;
   }
 
   let top = blogs[0];
@@ -27,8 +27,35 @@ const favouriteBlog = (blogs) => {
   return (({ title, author, likes }) => ({ title, author, likes }))(top);
 };
 
+const mostBlogs = (blogs) => {
+  resultArray = [];
+
+  for (let i = 0; i < blogs.length; ++i) {
+    for (let j = 0; j < resultArray.length; ++j) {
+      if (blogs[i].author === resultArray[j].author) {
+        resultArray[j].blogs += 1;
+        break;
+      }
+    }
+    resultArray.push({
+      author: blogs[i].author,
+      blogs: 1,
+    });
+  }
+
+  let top = resultArray[0];
+  for (let i = 1; i < resultArray.length; ++i) {
+    if (resultArray[i].blogs > top.blogs){
+      top = resultArray[i];
+    }
+  }
+
+  return top;
+};
+
 module.exports = {
   dummy,
   totalLikes,
   favouriteBlog,
+  mostBlogs
 };
