@@ -60,17 +60,42 @@ test("dummy returns one", () => {
 
 describe("total likes", () => {
   test("of empty list is zero", () => {
-    const result = listHelper.totalLiked([]);
+    const result = listHelper.totalLikes([]);
     expect(result).toBe(0);
   });
 
   test("when list has only one blog", () => {
-    const result = listHelper.totalLiked([blogs[0]]);
+    const result = listHelper.totalLikes([blogs[0]]);
     expect(result).toBe(7);
   });
 
   test("of a bigger list", () => {
-    const result = listHelper.totalLiked(blogs);
+    const result = listHelper.totalLikes(blogs);
     expect(result).toBe(36);
+  });
+});
+
+describe("favourite blog", () => {
+  test("of empty list is null", () => {
+    const result = listHelper.favouriteBlog([]);
+    expect(result).toEqual(null);
+  });
+
+  test("when list has only one blog", () => {
+    const result = listHelper.favouriteBlog([blogs[0]]);
+    expect(result).toEqual({
+      title: "React patterns",
+      author: "Michael Chan",
+      likes: 7,
+    });
+  });
+
+  test("of a bigger list", () => {
+    const result = listHelper.favouriteBlog(blogs);
+    expect(result).toEqual({
+      title: "Canonical string reduction",
+      author: "Edsger W. Dijkstra",
+      likes: 12,
+    });
   });
 });
