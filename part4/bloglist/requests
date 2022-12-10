@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# get all
+curl -s -X GET http://localhost:3001/api/blogs | jq
+
+# write test file
+curl -X POST http://localhost:3001/api/blogs \
+-H "Content-Type: application/json" \
+-d \
+'{
+  "title": "Title",
+  "author": "Author",
+  "url": "www.site.com",
+  "likes": "420" 
+}' | jq
+
