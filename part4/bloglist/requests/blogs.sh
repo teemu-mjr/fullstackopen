@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # get all
 curl -s -X GET http://localhost:3001/api/blogs | jq
 
@@ -11,6 +9,6 @@ curl -X POST http://localhost:3001/api/blogs \
   "title": "Title",
   "author": "Author",
   "url": "www.site.com",
-  "likes": "420" 
+  "likes": 10
 }' | jq
 

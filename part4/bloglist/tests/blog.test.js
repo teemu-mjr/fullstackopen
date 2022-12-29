@@ -70,6 +70,25 @@ test("blog posts are saved on POST", async () => {
   expect(urls).toContain(newPost.url);
 });
 
+test("post likes default to 0", async () => {
+  await api
+    .post("/api/blogs")
+    .send({
+      title: "LIKES",
+      author: "Jest",
+      url: "test.jest",
+    })
+    .expect(201)
+    .expect("Content-Type", /application\/json/);
+
+  const res = await api
+    .get("/api/blogs")
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
+
+  expect(res.body[res.body.length - 1].likes).toEqual(0);
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
