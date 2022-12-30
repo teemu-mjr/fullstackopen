@@ -28,6 +28,30 @@ beforeEach(async () => {
   await blogObj.save();
 });
 
+describe("try create blog without", () => {
+  test("url", async () => {
+    await api
+      .post("/api/blogs")
+      .send({
+        title: "No Url",
+        author: "Jest",
+        likes: 0,
+      })
+      .expect(400);
+  });
+
+  test("title", async () => {
+    await api
+      .post("/api/blogs")
+      .send({
+        author: "Jest",
+        url: "No.Title",
+        likes: 0,
+      })
+      .expect(400);
+  });
+});
+
 test("blog posts are returned in json", async () => {
   await api
     .get("/api/blogs")
