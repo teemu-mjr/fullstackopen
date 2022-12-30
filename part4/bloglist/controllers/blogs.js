@@ -1,9 +1,11 @@
 const blogRouter = require("express").Router();
 const Blog = require("../models/blog");
 
+const logger = require("../utils/logger");
+
 blogRouter.get("/", async (req, res) => {
   const blogs = await Blog.find({});
-  res.json(blogs);
+  return res.json(blogs);
 });
 
 blogRouter.post("/", async (req, res) => {
@@ -19,7 +21,20 @@ blogRouter.post("/", async (req, res) => {
 
   const blog = new Blog(req.body);
   const result = await blog.save();
-  res.status(201).json(result);
+  return res.status(201).json(result);
+});
+
+blogRouter.delete("/:id", async (req, res) => {
+  try {
+    await Blog.findByIdAndDelete(req.params.id);
+  } catch (err) {
+    logger.error(err);
+    return res
+      .status(400)
+      .send(`could not find blog with id: ${req.params.id}`);
+  }
+
+  return res.sendStatus(204);
 });
 
 module.exports = blogRouter;

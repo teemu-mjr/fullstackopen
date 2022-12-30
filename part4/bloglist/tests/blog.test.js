@@ -3,33 +3,81 @@ const supertest = require("supertest");
 const app = require("../app.js");
 const api = supertest(app);
 
-const Blog = require("../models/blog");
+const helper = require("./test_helper");
 
-const initialBlogs = [
-  {
-    title: "Test Title",
-    author: "Test Author",
-    url: "test.site.com",
-    likes: 123,
-  },
-  {
-    title: "title",
-    author: "author",
-    url: "url",
-    likes: 0,
-  },
-];
+const Blog = require("../models/blog");
 
 beforeEach(async () => {
   await Blog.deleteMany({});
-  let blogObj = new Blog(initialBlogs[0]);
-  await blogObj.save();
-  blogObj = new Blog(initialBlogs[1]);
-  await blogObj.save();
+  await Blog.insertMany(helper.initialBlogs);
 });
 
-describe("try create blog without", () => {
-  test("url", async () => {
+describe("when there is initially some blogs", () => {
+  test("blogs are returned in json", async () => {
+    await api
+      .get("/api/blogs")
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+  });
+
+  test("all blogs are returned", async () => {
+    const res = await api.get("/api/blogs");
+
+    expect(res.body).toHaveLength(helper.initialBlogs.length);
+  });
+});
+
+describe("addition of a new blog", () => {
+  test("succeeds with valid data", async () => {
+    const newBlog = {
+      title: "POST",
+      author: "Jest",
+      url: "test.jest",
+      likes: 1,
+    };
+
+    await api
+      .post("/api/blogs")
+      .send(newBlog)
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const res = await api
+      .get("/api/blogs")
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
+    const titles = res.body.map((b) => b.title);
+    const authors = res.body.map((b) => b.author);
+    const urls = res.body.map((b) => b.url);
+
+    expect(res.body).toHaveLength(helper.initialBlogs.length + 1);
+
+    expect(titles).toContain(newBlog.title);
+    expect(authors).toContain(newBlog.author);
+    expect(urls).toContain(newBlog.url);
+  });
+
+  test("likes default to 0 if not set", async () => {
+    await api
+      .post("/api/blogs")
+      .send({
+        title: "LIKES",
+        author: "Jest",
+        url: "test.jest",
+      })
+      .expect(201)
+      .expect("Content-Type", /application\/json/);
+
+    const res = await api
+      .get("/api/blogs")
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+
+    expect(res.body[res.body.length - 1].likes).toEqual(0);
+  });
+
+  test("fails with statuscode 400 if no url", async () => {
     await api
       .post("/api/blogs")
       .send({
@@ -40,7 +88,7 @@ describe("try create blog without", () => {
       .expect(400);
   });
 
-  test("title", async () => {
+  test("fails with statuscode 400 if no title", async () => {
     await api
       .post("/api/blogs")
       .send({
@@ -52,65 +100,36 @@ describe("try create blog without", () => {
   });
 });
 
-test("blog posts are returned in json", async () => {
-  await api
-    .get("/api/blogs")
-    .expect(200)
-    .expect("Content-Type", /application\/json/);
+describe("deletion of a blog", () => {
+  test("succeeds with status code 204 if id is valid", async () => {
+    const blogsAtStart = await helper.blogsInDB();
+    const blogToDelete = blogsAtStart[0];
+
+    await api
+      .delete(`/api/blogs/${blogToDelete.id}`) //
+      .expect(204);
+
+    const blogsAtEnd = await helper.blogsInDB();
+    expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1);
+  });
+
+  test("fails with statuscode 400 if id is invalid", async () => {
+    const invalidId = "00000000000000000000000";
+
+    await api
+      .delete(`/api/blogs/${invalidId}`) //
+      .expect(400);
+  });
 });
 
-test("blog posts have id instead of _id", async () => {
-  const blog = new Blog(initialBlogs[0]);
-  expect(blog.toJSON().id).toBeDefined();
-});
-
-test("blog posts are saved on POST", async () => {
-  const newPost = {
-    title: "POST",
+test("blogs have id instead of _id", async () => {
+  const blog = new Blog({
+    title: "Testing id",
     author: "Jest",
-    url: "test.jest",
-    likes: 1,
-  };
-
-  await api
-    .post("/api/blogs")
-    .send(newPost)
-    .expect(201)
-    .expect("Content-Type", /application\/json/);
-
-  const res = await api
-    .get("/api/blogs")
-    .expect(200)
-    .expect("Content-Type", /application\/json/);
-
-  const titles = res.body.map((b) => b.title);
-  const authors = res.body.map((b) => b.author);
-  const urls = res.body.map((b) => b.url);
-
-  expect(res.body).toHaveLength(initialBlogs.length + 1);
-
-  expect(titles).toContain(newPost.title);
-  expect(authors).toContain(newPost.author);
-  expect(urls).toContain(newPost.url);
-});
-
-test("post likes default to 0", async () => {
-  await api
-    .post("/api/blogs")
-    .send({
-      title: "LIKES",
-      author: "Jest",
-      url: "test.jest",
-    })
-    .expect(201)
-    .expect("Content-Type", /application\/json/);
-
-  const res = await api
-    .get("/api/blogs")
-    .expect(200)
-    .expect("Content-Type", /application\/json/);
-
-  expect(res.body[res.body.length - 1].likes).toEqual(0);
+    url: "jest.test",
+    likes: 0,
+  });
+  expect(blog.toJSON().id).toBeDefined();
 });
 
 afterAll(() => {
