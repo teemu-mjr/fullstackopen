@@ -24,6 +24,19 @@ blogRouter.post("/", async (req, res) => {
   return res.status(201).json(result);
 });
 
+blogRouter.patch("/:id", async (req, res) => {
+  try {
+    await Blog.findByIdAndUpdate(req.params.id, req.body);
+  } catch (err) {
+    logger.error(err);
+    return res
+      .status(400)
+      .send(`could not find blog with id: ${req.params.id}`);
+  }
+
+  return res.sendStatus(204);
+});
+
 blogRouter.delete("/:id", async (req, res) => {
   try {
     await Blog.findByIdAndDelete(req.params.id);

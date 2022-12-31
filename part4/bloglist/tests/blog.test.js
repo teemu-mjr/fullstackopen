@@ -100,6 +100,37 @@ describe("addition of a new blog", () => {
   });
 });
 
+describe("update of a blog", () => {
+  test("succeeds with status code 204 if id is valid", async () => {
+    const blogsAtStart = await helper.blogsInDB();
+    const blogToUpdate = blogsAtStart[0];
+
+    await api
+      .patch(`/api/blogs/${blogToUpdate.id}`)
+      .send({
+        title: "UPDATE TITLE",
+        author: "UPDATE AUTHOR",
+        url: "UPDATE URL",
+        likes: 1000,
+      })
+      .expect(204);
+
+    const blogsAtEnd = await helper.blogsInDB();
+    expect(blogsAtEnd[0].title).toEqual("UPDATE TITLE");
+    expect(blogsAtEnd[0].author).toEqual("UPDATE AUTHOR");
+    expect(blogsAtEnd[0].url).toEqual("UPDATE URL");
+    expect(blogsAtEnd[0].likes).toEqual(1000);
+  });
+
+  test("fails with statuscode 400 if id is invalid", async () => {
+    const invalidId = "00000000000000000000000";
+
+    await api
+      .patch(`/api/blogs/${invalidId}`) //
+      .expect(400);
+  });
+});
+
 describe("deletion of a blog", () => {
   test("succeeds with status code 204 if id is valid", async () => {
     const blogsAtStart = await helper.blogsInDB();
