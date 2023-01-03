@@ -3,9 +3,9 @@ const Blog = require("../models/blog");
 
 const logger = require("../utils/logger");
 
-blogsRouter.get("/", async (req, res) => {
+blogsRouter.get("/", async (_req, res) => {
   const blogs = await Blog.find({});
-  return res.json(blogs);
+  res.json(blogs);
 });
 
 blogsRouter.post("/", async (req, res) => {
@@ -21,7 +21,7 @@ blogsRouter.post("/", async (req, res) => {
 
   const blog = new Blog(req.body);
   const result = await blog.save();
-  return res.status(201).json(result);
+  res.status(201).json(result);
 });
 
 blogsRouter.patch("/:id", async (req, res) => {
@@ -47,7 +47,7 @@ blogsRouter.delete("/:id", async (req, res) => {
       .send(`could not find blog with id: ${req.params.id}`);
   }
 
-  return res.sendStatus(204);
+  res.sendStatus(204);
 });
 
 module.exports = blogsRouter;

@@ -22,13 +22,12 @@ describe("when there is initially some blogs", () => {
 
   test("all blogs are returned", async () => {
     const res = await api.get("/api/blogs");
-
     expect(res.body).toHaveLength(helper.initialBlogs.length);
   });
 });
 
 describe("addition of a new blog", () => {
-  test("succeeds with valid data", async () => {
+  test("succeeds with statuscode 200 with valid data", async () => {
     const newBlog = {
       title: "POST",
       author: "Jest",
@@ -42,20 +41,13 @@ describe("addition of a new blog", () => {
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
-    const res = await api
-      .get("/api/blogs")
-      .expect(200)
-      .expect("Content-Type", /application\/json/);
-
-    const titles = res.body.map((b) => b.title);
-    const authors = res.body.map((b) => b.author);
-    const urls = res.body.map((b) => b.url);
-
+    const res = await api.get("/api/blogs");
     expect(res.body).toHaveLength(helper.initialBlogs.length + 1);
 
-    expect(titles).toContain(newBlog.title);
-    expect(authors).toContain(newBlog.author);
-    expect(urls).toContain(newBlog.url);
+    const dbBlog = res.body.find((b) => b.title === newBlog.title);
+    expect(dbBlog.title).toEqual(newBlog.title);
+    expect(dbBlog.author).toEqual(newBlog.author);
+    expect(dbBlog.url).toEqual(newBlog.url);
   });
 
   test("likes default to 0 if not set", async () => {
@@ -77,7 +69,7 @@ describe("addition of a new blog", () => {
     expect(res.body[res.body.length - 1].likes).toEqual(0);
   });
 
-  test("fails with statuscode 400 if no url", async () => {
+  test("fails with statuscode 400 without url", async () => {
     await api
       .post("/api/blogs")
       .send({
@@ -88,7 +80,7 @@ describe("addition of a new blog", () => {
       .expect(400);
   });
 
-  test("fails with statuscode 400 if no title", async () => {
+  test("fails with statuscode 400 wihtout title", async () => {
     await api
       .post("/api/blogs")
       .send({
@@ -160,6 +152,7 @@ test("blogs have id instead of _id", async () => {
     url: "jest.test",
     likes: 0,
   });
+  expect(blog.toJSON()._id).not.toBeDefined();
   expect(blog.toJSON().id).toBeDefined();
 });
 
