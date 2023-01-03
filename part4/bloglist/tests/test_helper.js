@@ -1,17 +1,27 @@
 const Blog = require("../models/blog");
 const User = require("../models/user");
 
-exports.blogsInDB = async () => {
+const bcrypt = require("bcrypt");
+
+const invalidBlogId = async () => {
+  const id = Math.floor(Math.random() * 100);
+  if (await Blog.findById(id)) {
+    return invalidUserId();
+  }
+  return id;
+};
+
+const blogsInDB = async () => {
   const blogs = await Blog.find({});
   return blogs.map((b) => b.toJSON());
 };
 
-exports.usersInDB = async () => {
+const usersInDB = async () => {
   const users = await User.find({});
   return users.map((u) => u.toJSON());
 };
 
-exports.initialBlogs = [
+const initialBlogs = [
   {
     title: "Test Title",
     author: "Test Author",
@@ -26,15 +36,23 @@ exports.initialBlogs = [
   },
 ];
 
-exports.initialUsers = [
+const initialUsers = [
   {
     username: "root",
     name: "Superuser",
-    password: "secret",
+    password: async () => await bcrypt.hash("secret", 10),
   },
   {
     username: "test-user",
     name: "Test User",
-    password: "secret",
+    password: async () => await bcrypt.hash("secret", 10),
   },
 ];
+
+module.exports = {
+  invalidBlogId,
+  blogsInDB,
+  usersInDB,
+  initialBlogs,
+  initialUsers,
+};

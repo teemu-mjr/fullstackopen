@@ -3,7 +3,12 @@ const usersRouter = require("express").Router();
 const User = require("../models/user");
 
 usersRouter.get("/", async (_req, res) => {
-  const users = await User.find({});
+  const users = await User.find({}) //
+    .populate("blogs", {
+      title: 1,
+      author: 1,
+      url: 1,
+    });
   res.status(200).json(users);
 });
 
@@ -28,9 +33,7 @@ usersRouter.post("/", async (req, res) => {
 
   // username must be unique
   if (await User.findOne({ username: username })) {
-    return res
-      .status(400)
-      .json({ message: `username ${username} is in use` });
+    return res.status(400).json({ message: `username is in use` });
   }
 
   const saltRounds = 10;

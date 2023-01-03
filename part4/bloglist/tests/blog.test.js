@@ -7,12 +7,11 @@ const helper = require("./test_helper");
 
 const Blog = require("../models/blog");
 
-beforeEach(async () => {
-  await Blog.deleteMany({});
-  await Blog.insertMany(helper.initialBlogs);
-});
-
 describe("when there is initially some blogs", () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({});
+    await Blog.insertMany(helper.initialBlogs);
+  });
   test("blogs are returned in json", async () => {
     await api
       .get("/api/blogs")
@@ -115,10 +114,8 @@ describe("update of a blog", () => {
   });
 
   test("fails with statuscode 400 if id is invalid", async () => {
-    const invalidId = "00000000000000000000000";
-
     await api
-      .patch(`/api/blogs/${invalidId}`) //
+      .patch(`/api/blogs/${helper.invalidBlogId}`) //
       .expect(400);
   });
 });
@@ -137,10 +134,8 @@ describe("deletion of a blog", () => {
   });
 
   test("fails with statuscode 400 if id is invalid", async () => {
-    const invalidId = "00000000000000000000000";
-
     await api
-      .delete(`/api/blogs/${invalidId}`) //
+      .delete(`/api/blogs/${helper.invalidBlogId}`) //
       .expect(400);
   });
 });

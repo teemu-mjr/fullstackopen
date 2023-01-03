@@ -4,15 +4,13 @@ const app = require("../app.js");
 const api = supertest(app);
 
 const helper = require("./test_helper");
-
 const User = require("../models/user");
 
-beforeEach(async () => {
-  await User.deleteMany({});
-  await User.insertMany(helper.initialUsers);
-});
-
 describe("when there is initially some users", () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+    await User.insertMany(helper.initialUsers);
+  });
   test("users are returned in json", async () => {
     await api
       .get("/api/users")
@@ -27,6 +25,8 @@ describe("when there is initially some users", () => {
 
 describe("addition of a new user", () => {
   test("succeeds with statuscode 200 with valid data", async () => {
+    const usersAtStart = await helper.usersInDB();
+
     const newUser = {
       name: "Jest Test",
       username: "jest",
@@ -38,14 +38,14 @@ describe("addition of a new user", () => {
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
-    const res = await api.get("/api/users");
-    expect(res.body).toHaveLength(helper.initialUsers.length + 1);
+    const usersAtEnd = await helper.usersInDB();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length + 1);
 
-    const dbUser = res.body.find((u) => u.username === newUser.username);
+    const dbUser = usersAtEnd.find((u) => u.username === newUser.username);
     expect(dbUser.name).toEqual(newUser.name);
     expect(dbUser.username).toEqual(newUser.username);
 
-    expect(res.body);
+    expect(usersAtEnd);
   });
 
   test("fails with statuscode 400 with taken username", async () => {
