@@ -1,14 +1,14 @@
-const blogRouter = require("express").Router();
+const blogsRouter = require("express").Router();
 const Blog = require("../models/blog");
 
 const logger = require("../utils/logger");
 
-blogRouter.get("/", async (req, res) => {
+blogsRouter.get("/", async (req, res) => {
   const blogs = await Blog.find({});
   return res.json(blogs);
 });
 
-blogRouter.post("/", async (req, res) => {
+blogsRouter.post("/", async (req, res) => {
   // check for title and url
   if (!req.body?.title || !req.body?.url) {
     return res.sendStatus(400);
@@ -24,7 +24,7 @@ blogRouter.post("/", async (req, res) => {
   return res.status(201).json(result);
 });
 
-blogRouter.patch("/:id", async (req, res) => {
+blogsRouter.patch("/:id", async (req, res) => {
   try {
     await Blog.findByIdAndUpdate(req.params.id, req.body);
   } catch (err) {
@@ -37,7 +37,7 @@ blogRouter.patch("/:id", async (req, res) => {
   return res.sendStatus(204);
 });
 
-blogRouter.delete("/:id", async (req, res) => {
+blogsRouter.delete("/:id", async (req, res) => {
   try {
     await Blog.findByIdAndDelete(req.params.id);
   } catch (err) {
@@ -50,4 +50,4 @@ blogRouter.delete("/:id", async (req, res) => {
   return res.sendStatus(204);
 });
 
-module.exports = blogRouter;
+module.exports = blogsRouter;
