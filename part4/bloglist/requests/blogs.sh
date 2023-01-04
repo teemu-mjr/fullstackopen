@@ -2,7 +2,7 @@
 curl -v -X GET http://localhost:3001/api/blogs | jq
 
 # add one
-TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlZW11LW1qciIsImlkIjoiNjNiNGFjZWNlMDUwNTQxYjQ4MzgwNDdmIiwiaWF0IjoxNjcyNzg2MjE4LCJleHAiOjE2NzI3ODYyMzh9.xMQz_AhYX__5DEUMAM4BBz5UGvtI5yPBTpSNytT814g
+TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlZW11LW1qciIsImlkIjoiNjNiNTg0MzUyMTc4YThlNDIwODQ2NThlIiwiaWF0IjoxNjcyODQwMzAxLCJleHAiOjE2NzI4NDM5MDF9.5tJOFMMcs2AIlcAkxepIOm3S4nOCyucqyPj5bOf08Vw"
 curl -v -X POST http://localhost:3001/api/blogs \
 -H "Authorization: Bearer ${TOKEN}" \
 -H "Content-Type: application/json" \
@@ -15,7 +15,7 @@ curl -v -X POST http://localhost:3001/api/blogs \
 }' | jq
 
 # pach one
-ID=63af71d4a60976e47f0eb056
+ID=pddd
 curl -v -X PATCH http://localhost:3001/api/blogs/"$ID" \
 -H "Content-Type: application/json" \
 -d \
