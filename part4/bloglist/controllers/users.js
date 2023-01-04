@@ -16,24 +16,24 @@ usersRouter.post("/", async (req, res) => {
   const { username, name, password } = req.body;
 
   if (username === undefined || password === undefined) {
-    return res.status(400).json({ message: "content missing" });
+    return res.status(400).json({ error: "content missing" });
   }
 
   if (username.length < 3) {
     return res
       .status(400)
-      .json({ message: "username must be atleast 3 characters long" });
+      .json({ error: "username must be at least 3 characters long" });
   }
 
   if (password.length < 3) {
     return res
       .status(400)
-      .json({ message: "password must be atleast 3 characters long" });
+      .json({ error: "password must be at least 3 characters long" });
   }
 
   // username must be unique
   if (await User.findOne({ username: username })) {
-    return res.status(400).json({ message: `username is in use` });
+    return res.status(400).json({ error: "username must be unique" });
   }
 
   const saltRounds = 10;

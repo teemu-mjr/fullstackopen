@@ -1,8 +1,10 @@
 # get all
-curl -s -X GET http://localhost:3001/api/blogs | jq
+curl -v -X GET http://localhost:3001/api/blogs | jq
 
 # add one
-curl -X POST http://localhost:3001/api/blogs \
+TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlZW11LW1qciIsImlkIjoiNjNiNGFjZWNlMDUwNTQxYjQ4MzgwNDdmIiwiaWF0IjoxNjcyNzg2MjE4LCJleHAiOjE2NzI3ODYyMzh9.xMQz_AhYX__5DEUMAM4BBz5UGvtI5yPBTpSNytT814g
+curl -v -X POST http://localhost:3001/api/blogs \
+-H "Authorization: Bearer ${TOKEN}" \
 -H "Content-Type: application/json" \
 -d \
 '{
@@ -14,7 +16,7 @@ curl -X POST http://localhost:3001/api/blogs \
 
 # pach one
 ID=63af71d4a60976e47f0eb056
-curl -X PATCH http://localhost:3001/api/blogs/"$ID" \
+curl -v -X PATCH http://localhost:3001/api/blogs/"$ID" \
 -H "Content-Type: application/json" \
 -d \
 '{
@@ -26,4 +28,4 @@ curl -X PATCH http://localhost:3001/api/blogs/"$ID" \
 
 # delete one
 ID=63af548352c629342c9890a2
-curl -X DELETE http://localhost:3001/api/blogs/"$ID"
+curl -v -X DELETE http://localhost:3001/api/blogs/"$ID"

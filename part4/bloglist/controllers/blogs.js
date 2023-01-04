@@ -1,10 +1,20 @@
 const blogsRouter = require("express").Router();
+const jwt = require("jsonwebtoken");
 const Blog = require("../models/blog");
 const User = require("../models/user");
 
-const logger = require("../utils/logger");
+const config = require("../utils/config");
+
+const getTokenFrom = (req) => {
+  const authorization = req.get("authorization");
+  if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
+    return authorization.substring(7);
+  }
+  return null;
+};
 
 blogsRouter.get("/", async (_req, res) => {
+  // TODO: token etc
   const blogs = await Blog.find({}) //
     .populate("user", {
       username: 1,
@@ -13,19 +23,24 @@ blogsRouter.get("/", async (_req, res) => {
   res.json(blogs);
 });
 
-blogsRouter.post("/", async (req, res) => {
+blogsRouter.post("/", async (req, res, next) => {
   // check for title and url
   if (!req.body?.title || !req.body?.url) {
     return res.sendStatus(400);
   }
-
   // set likes to 0 if missing
   if (req.body.likes === undefined) {
     req.body.likes = 0;
   }
 
-  // TODO: get the real blog owner
-  const user = await User.findOne({});
+  const token = getTokenFrom(req);
+  try {
+    var decodedToken = jwt.verify(token, config.SECRET);
+  } catch (err) {
+    return next(err);
+  }
+
+  const user = await User.findById(decodedToken.id);
 
   const blog = new Blog({
     title: req.body.title,
@@ -40,27 +55,23 @@ blogsRouter.post("/", async (req, res) => {
   res.status(201).json(savedBlog);
 });
 
-blogsRouter.patch("/:id", async (req, res) => {
+blogsRouter.patch("/:id", async (req, res, next) => {
+  // TODO: token etc
   try {
-    await Blog.findByIdAndUpdate(req.params.id, req.body);
+    await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true });
   } catch (err) {
-    logger.error(err);
-    return res
-      .status(400)
-      .send(`could not find blog with id: ${req.params.id}`);
+    return next(err);
   }
 
-  return res.sendStatus(204);
+  res.sendStatus(204);
 });
 
-blogsRouter.delete("/:id", async (req, res) => {
+blogsRouter.delete("/:id", async (req, res, next) => {
+  // TODO: token etc
   try {
     await Blog.findByIdAndDelete(req.params.id);
   } catch (err) {
-    logger.error(err);
-    return res
-      .status(400)
-      .send(`could not find blog with id: ${req.params.id}`);
+    return next(err);
   }
 
   res.sendStatus(204);
