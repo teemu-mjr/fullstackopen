@@ -2,7 +2,7 @@
 curl -v -X GET http://localhost:3001/api/blogs | jq
 
 # add one
-TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlZW11LW1qciIsImlkIjoiNjNiNTg0MzUyMTc4YThlNDIwODQ2NThlIiwiaWF0IjoxNjcyODQwMzAxLCJleHAiOjE2NzI4NDM5MDF9.5tJOFMMcs2AIlcAkxepIOm3S4nOCyucqyPj5bOf08Vw"
+TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlZW11LW1qciIsImlkIjoiNjNiNmViOGY4Y2EyZWVjNWIxNTFlMmU5IiwiaWF0IjoxNjcyOTMyMjQyLCJleHAiOjE2NzI5MzU4NDJ9.h3WOgb9VCdzaerDx1fFPlCfw-OSYzOG1ojDoE60dEVg"
 curl -v -X POST http://localhost:3001/api/blogs \
 -H "Authorization: Bearer ${TOKEN}" \
 -H "Content-Type: application/json" \
@@ -27,5 +27,7 @@ curl -v -X PATCH http://localhost:3001/api/blogs/"$ID" \
 }' | jq
 
 # delete one
-ID=63af548352c629342c9890a2
-curl -v -X DELETE http://localhost:3001/api/blogs/"$ID"
+TOKEN="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlZW11LW1qciIsImlkIjoiNjNiNmViOGY4Y2EyZWVjNWIxNTFlMmU5IiwiaWF0IjoxNjcyOTMyMjQyLCJleHAiOjE2NzI5MzU4NDJ9.h3WOgb9VCdzaerDx1fFPlCfw-OSYzOG1ojDoE60dEVg"
+ID=63b6e60453b4fd1cbac6672d
+curl -v -X DELETE http://localhost:3001/api/blogs/"$ID" \
+-H "Authorization: Bearer ${TOKEN}"

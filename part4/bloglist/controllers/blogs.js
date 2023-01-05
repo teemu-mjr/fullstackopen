@@ -58,14 +58,24 @@ blogsRouter.patch("/:id", async (req, res, next) => {
 });
 
 blogsRouter.delete("/:id", async (req, res, next) => {
-  // TODO: token etc
   try {
-    await Blog.findByIdAndDelete(req.params.id);
+    const decodedToken = jwt.verify(req.token, config.SECRET);
+    const user = await User.findById(decodedToken.id);
+    const blog = await Blog.findById(req.params.id);
+
+    if (!blog || !user) {
+      return res.sendStatus(400);
+    }
+    if (blog.user.toString() !== user.id.toString()) {
+      return res.sendStatus(401);
+    }
+
+    await blog.remove();
   } catch (err) {
     return next(err);
   }
 
-  res.sendStatus(204);
+  res.status(200).json({ message: "blog removed" });
 });
 
 module.exports = blogsRouter;
