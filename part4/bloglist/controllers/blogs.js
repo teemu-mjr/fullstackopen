@@ -59,14 +59,11 @@ blogsRouter.patch("/:id", async (req, res, next) => {
 
 blogsRouter.delete("/:id", async (req, res, next) => {
   try {
-    const decodedToken = jwt.verify(req.token, config.SECRET);
-    const user = await User.findById(decodedToken.id);
     const blog = await Blog.findById(req.params.id);
-
-    if (!blog || !user) {
-      return res.sendStatus(400);
+    if (!blog) {
+      return res.status(400).json({ error: "blog not found" });
     }
-    if (blog.user.toString() !== user.id.toString()) {
+    if (blog.user.toString() !== req.user.id.toString()) {
       return res.sendStatus(401);
     }
 
