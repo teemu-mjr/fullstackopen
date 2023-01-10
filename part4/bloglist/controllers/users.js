@@ -15,7 +15,7 @@ usersRouter.get("/", async (_req, res) => {
 usersRouter.post("/", async (req, res) => {
   const { username, name, password } = req.body;
 
-  if (username === undefined || password === undefined) {
+  if (!username || !password) {
     return res.status(400).json({ error: "content missing" });
   }
 

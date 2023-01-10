@@ -4,7 +4,7 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 
 const invalidBlogId = async () => {
-  const id = Math.floor(Math.random() * 100);
+  const id = Math.floor(Math.random() * 10000);
   if (await Blog.findById(id)) {
     return invalidUserId();
   }
@@ -40,12 +40,9 @@ const initialUsers = [
   {
     username: "root",
     name: "Superuser",
-    password: async () => await bcrypt.hash("secret", 10),
-  },
-  {
-    username: "test-user",
-    name: "Test User",
-    password: async () => await bcrypt.hash("secret", 10),
+    // bcrypt.hash("secret", 10)
+    passwordHash: "$2b$10$khZQIuiogKMOuQKGj9aaueM2DSGCc1baPWTMg5jvwlsjpfEzY4nCS",
+    blogs: [],
   },
 ];
 

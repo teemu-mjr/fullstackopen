@@ -6,7 +6,6 @@ const User = require("../models/user");
 const config = require("../utils/config");
 
 blogsRouter.get("/", async (_req, res) => {
-  // TODO: token etc
   const blogs = await Blog.find({}) //
     .populate("user", {
       username: 1,
@@ -26,12 +25,14 @@ blogsRouter.post("/", async (req, res, next) => {
   }
 
   try {
-    var decodedToken = jwt.verify(req.token, config.SECRET);
+    const decodedToken = jwt.verify(req.token, config.SECRET);
+    var user = await User.findById(decodedToken.id);
+    if (!user) {
+      return res.status(400).json({ error: "user not found" });
+    }
   } catch (err) {
     return next(err);
   }
-
-  const user = await User.findById(decodedToken.id);
 
   const blog = new Blog({
     title: req.body.title,
@@ -47,7 +48,6 @@ blogsRouter.post("/", async (req, res, next) => {
 });
 
 blogsRouter.patch("/:id", async (req, res, next) => {
-  // TODO: token etc
   try {
     await Blog.findByIdAndUpdate(req.params.id, req.body, { new: true });
   } catch (err) {
@@ -63,10 +63,6 @@ blogsRouter.delete("/:id", async (req, res, next) => {
     if (!blog) {
       return res.status(400).json({ error: "blog not found" });
     }
-    if (blog.user.toString() !== req.user.id.toString()) {
-      return res.sendStatus(401);
-    }
-
     await blog.remove();
   } catch (err) {
     return next(err);

@@ -6,9 +6,12 @@ const api = supertest(app);
 const helper = require("./test_helper");
 
 const Blog = require("../models/blog");
+const User = require("../models/user.js");
 
 describe("when there is initially some blogs", () => {
   beforeEach(async () => {
+    await User.deleteMany({});
+    await User.insertMany(helper.initialUsers);
     await Blog.deleteMany({});
     await Blog.insertMany(helper.initialBlogs);
   });
@@ -26,6 +29,15 @@ describe("when there is initially some blogs", () => {
 });
 
 describe("addition of a new blog", () => {
+  beforeEach(async () => {
+    await User.deleteMany({});
+    await User.insertMany(helper.initialUsers);
+    const res = await api
+      .post("/api/login")
+      .send({ username: "root", password: "secret" });
+    token = res.body.token;
+  });
+
   test("succeeds with statuscode 200 with valid data", async () => {
     const newBlog = {
       title: "POST",
@@ -37,6 +49,7 @@ describe("addition of a new blog", () => {
     await api
       .post("/api/blogs")
       .send(newBlog)
+      .set("Authorization", `Bearer ${token}`)
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
@@ -57,6 +70,7 @@ describe("addition of a new blog", () => {
         author: "Jest",
         url: "test.jest",
       })
+      .set("Authorization", `Bearer ${token}`)
       .expect(201)
       .expect("Content-Type", /application\/json/);
 
@@ -88,6 +102,20 @@ describe("addition of a new blog", () => {
         likes: 0,
       })
       .expect(400);
+  });
+
+  test("fails with statuscode 401 with no token", async () => {
+    const newBlog = {
+      title: "POST",
+      author: "Jest",
+      url: "test.jest",
+      likes: 1,
+    };
+
+    await api
+      .post("/api/blogs") //
+      .send(newBlog)
+      .expect(401);
   });
 });
 
@@ -121,13 +149,18 @@ describe("update of a blog", () => {
 });
 
 describe("deletion of a blog", () => {
-  test("succeeds with status code 204 if id is valid", async () => {
+  beforeEach(async () => {
+    await Blog.deleteMany({});
+    await Blog.insertMany(helper.initialBlogs);
+  });
+
+  test("succeeds with status code 200 if id is valid", async () => {
     const blogsAtStart = await helper.blogsInDB();
     const blogToDelete = blogsAtStart[0];
 
     await api
       .delete(`/api/blogs/${blogToDelete.id}`) //
-      .expect(204);
+      .expect(200);
 
     const blogsAtEnd = await helper.blogsInDB();
     expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1);
